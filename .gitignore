@@ -1,0 +1,28 @@
+# SwiftPM and Xcode build products
+.build/
+DerivedData/
+build/
+dist/
+
+# Local packaging and generated artifacts
+*.app/
+*.dmg
+*.zip
+*.tar
+*.tar.gz
+outputs/
+
+# Local editor and OS metadata
+.DS_Store
+.swiftpm/
+.idea/
+.vscode/
+
+# Local runtime or account data (never commit these)
+auth.json
+state.json
+runtime/
+*.log
+*.pem
+*.key
+*.crt
