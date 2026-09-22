@@ -6,6 +6,10 @@ Codex 账号管理器（Codex Account Manager） 是一款适用于 macOS 的轻
 
 > 这是一款独立的本地工具，非 OpenAI 官方应用，也不会自动轮换账号或绕过服务限制。
 
+中文： [功能](#你可以看到什么) | [使用方法](#怎么使用) | [隐私和安全](#隐私和安全) | [常见问题](#常见问题)
+
+English: [Features](#what-you-can-see) | [How to use](#how-to-use-it) | [Privacy and security](#privacy-and-security) | [FAQ](#frequently-asked-questions)
+
 ## 你可以看到什么
 
 - 账号列表：集中查看已经添加的 Codex 账号。
