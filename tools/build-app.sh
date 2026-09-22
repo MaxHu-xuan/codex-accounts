@@ -4,9 +4,14 @@ project_dir="${0:A:h:h}"
 destination="${1:-$project_dir/dist}"
 app_dir="$destination/Codex Accounts.app"
 cd "$project_dir"
-swift build -c release
+swift build -c release \
+  -Xswiftc -debug-prefix-map \
+  -Xswiftc "$project_dir=/source"
 mkdir -p "$app_dir/Contents/MacOS" "$app_dir/Contents/Resources"
 cp .build/release/CodexAccounts "$app_dir/Contents/MacOS/CodexAccounts"
+# Remove compiler debug sections before signing so local build paths are not
+# embedded in the public application bundle.
+strip -S "$app_dir/Contents/MacOS/CodexAccounts"
 swift tools/make-icon.swift .build/AppIcon.iconset
 iconutil -c icns .build/AppIcon.iconset -o "$app_dir/Contents/Resources/AppIcon.icns"
 cat > "$app_dir/Contents/Info.plist" <<'PLIST'
