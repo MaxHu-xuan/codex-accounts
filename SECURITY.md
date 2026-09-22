@@ -19,9 +19,8 @@ them first and remove them from the repository history.
 
 ## Reporting a vulnerability
 
-Please open a private security report through the repository's configured
-security contact. If private reporting is unavailable, open an issue that
+Please use GitHub's private vulnerability reporting for this repository when it
+is available. If private reporting is unavailable, open an issue that
 contains only a short, non-sensitive description and ask for a private
 follow-up. Include the affected version, macOS version, reproduction steps
 without secrets, and the expected and actual behavior.
-
