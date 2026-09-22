@@ -1,14 +1,24 @@
 # Codex 账号管理器：Mac 上的账号、额度和重置时间查看器
 
-Codex 账号管理器（Codex Account Manager） 是一款适用于 macOS 的轻量工具，用一个清晰的窗口和菜单栏列表，集中查看多个 Codex 账号的套餐、剩余额度和下次重置时间。
+Codex 账号管理器（Codex Account Manager）是一款适用于 macOS 的轻量工具，用一个清晰的窗口和菜单栏列表，集中查看多个 Codex 账号的套餐、剩余额度和下次重置时间。
 
 它适合同时使用个人账号、工作账号，或需要区分多个 ChatGPT / Codex 订阅的人。你可以每天查看一次所有账号的状态，减少反复登录、打开多个页面和手动记录额度的麻烦。
 
 > 这是一款独立的本地工具，非 OpenAI 官方应用，也不会自动轮换账号或绕过服务限制。
 
-中文： [功能](#你可以看到什么) | [使用方法](#怎么使用) | [隐私和安全](#隐私和安全) | [常见问题](#常见问题)
+## 内容导航 / Contents
 
-English: [Features](#what-you-can-see) | [How to use](#how-to-use-it) | [Privacy and security](#privacy-and-security) | [FAQ](#frequently-asked-questions)
+| 中文 | English |
+| --- | --- |
+| [你可以看到什么](#你可以看到什么) | [What you can see](#what-you-can-see) |
+| [什么时候有用](#什么时候有用) | [Who it is for](#who-it-is-for) |
+| [怎么使用](#怎么使用) | [How to use it](#how-to-use-it) |
+| [账号切换说明](#账号切换说明) | [Account switching](#account-switching) |
+| [隐私和安全](#隐私和安全) | [Privacy and security](#privacy-and-security) |
+| [额度和订阅日期的区别](#额度和订阅日期的区别) | [Quota reset versus subscription expiry](#quota-reset-versus-subscription-expiry) |
+| [常见问题](#常见问题) | [Frequently asked questions](#frequently-asked-questions) |
+| [项目状态](#项目状态) | [Project status](#project-status) |
+| [许可证](#许可证) | [License](#license) |
 
 ## 你可以看到什么
 
@@ -32,7 +42,7 @@ English: [Features](#what-you-can-see) | [How to use](#how-to-use-it) | [Privacy
 ## 怎么使用
 
 1. 打开 Codex Accounts。
-2. 点击 添加账号，在官方登录页面完成登录。
+2. 点击“添加账号”，在官方登录页面完成登录。
 3. 登录完成后，账号、套餐、余额和下次重置时间会显示在列表中。
 4. 菜单栏可以快速查看；主窗口可以修改备注、填写订阅到期日、重新登录或移除账号。
 5. 在主窗口的“设置”中选择每天自动查看的时间。默认是本地时间 09:00。
@@ -47,7 +57,7 @@ English: [Features](#what-you-can-see) | [How to use](#how-to-use-it) | [Privacy
 
 ## 隐私和安全
 
-- 登录信息只保存在这台 Mac 的系统安全存储中。
+- 长期登录凭据只保存在这台 Mac 的系统安全存储中；邮箱和额度快照只保存在本机记录中。
 - 账号查询在本机独立进行，不会把你的账号列表上传到本工具的服务器。
 - 不会读取或复制你正在使用的 Codex 桌面登录状态。
 - 不会把账号密码、登录令牌或额度数据写入公开仓库。
@@ -148,7 +158,7 @@ After you finish signing in, you can mark that account as Current (manually conf
 
 ## Privacy and security
 
-- Login information stays in the Mac's secure system storage.
+- Long-term login credentials stay in the Mac's secure system storage; email addresses and quota snapshots stay in local records.
 - Account checks run locally and are not sent to a server operated by this utility.
 - The utility does not read or copy the login state of your existing Codex desktop session.
 - Account passwords, login tokens, and personal quota snapshots are not included in this public repository.
