@@ -97,7 +97,7 @@ Codex 账号管理器（Codex Account Manager）是一款适用于 macOS 的轻�
 
 ### 支持哪些 Mac？
 
-当前版本面向 macOS 15 或更新版本的 Apple silicon Mac，并要求电脑上已经安装可用的 Codex 或 ChatGPT 桌面应用。
+当前版本面向 macOS 15 或更新版本的 Apple silicon Mac，并要求电脑上已经安装可用的 Codex 或 ChatGPT 桌面版，或 Codex CLI。
 
 ## 项目状态
 
@@ -198,7 +198,7 @@ The official quota information does not include the billing expiry date. In the 
 
 ### Which Macs are supported?
 
-The current version targets Apple silicon Macs running macOS 15 or later and requires a working Codex or ChatGPT desktop installation.
+The current version targets Apple silicon Macs running macOS 15 or later and requires a working Codex or ChatGPT desktop app, or Codex CLI.
 
 ## Project status
 

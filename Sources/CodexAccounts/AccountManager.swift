@@ -286,7 +286,7 @@ final class AccountManager {
     private func codexBinary() throws -> URL {
         let locations = ["/Applications/ChatGPT.app/Contents/Resources/codex", "/Applications/Codex.app/Contents/Resources/codex", "/opt/homebrew/bin/codex", "/usr/local/bin/codex"]
         guard let path = locations.first(where: { FileManager.default.isExecutableFile(atPath: $0) }) else {
-            throw ManagerError.message("未找到 Codex。请先安装或更新 Codex 桌面版。")
+            throw ManagerError.message("未找到可用的 Codex。请先安装或更新 Codex 桌面版或 Codex CLI。")
         }
         return URL(fileURLWithPath: path)
     }
