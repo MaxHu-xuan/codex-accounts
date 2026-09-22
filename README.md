@@ -6,19 +6,11 @@ Codex 账号管理器（Codex Account Manager）是一款适用于 macOS 的轻�
 
 > 这是一款独立的本地工具，非 OpenAI 官方应用，也不会自动轮换账号或绕过服务限制。
 
-## 内容导航 / Contents
+中文： [中文说明](#中文说明) | [功能](#你可以看到什么) | [使用方法](#怎么使用) | [隐私和安全](#隐私和安全) | [常见问题](#常见问题)
 
-| 中文 | English |
-| --- | --- |
-| [你可以看到什么](#你可以看到什么) | [What you can see](#what-you-can-see) |
-| [什么时候有用](#什么时候有用) | [Who it is for](#who-it-is-for) |
-| [怎么使用](#怎么使用) | [How to use it](#how-to-use-it) |
-| [账号切换说明](#账号切换说明) | [Account switching](#account-switching) |
-| [隐私和安全](#隐私和安全) | [Privacy and security](#privacy-and-security) |
-| [额度和订阅日期的区别](#额度和订阅日期的区别) | [Quota reset versus subscription expiry](#quota-reset-versus-subscription-expiry) |
-| [常见问题](#常见问题) | [Frequently asked questions](#frequently-asked-questions) |
-| [项目状态](#项目状态) | [Project status](#project-status) |
-| [许可证](#许可证) | [License](#license) |
+English: [English overview](#english-overview) | [Features](#what-you-can-see) | [How to use](#how-to-use-it) | [Privacy and security](#privacy-and-security) | [FAQ](#frequently-asked-questions)
+
+## 中文说明
 
 ## 你可以看到什么
 
@@ -115,7 +107,9 @@ Codex 账号管理器（Codex Account Manager）是一款适用于 macOS 的轻�
 
 ---
 
-# Codex Account Manager: macOS Account, Quota, and Reset-Time Viewer
+## English overview
+
+### Codex Account Manager: macOS Account, Quota, and Reset-Time Viewer
 
 Codex Account Manager is a lightweight macOS menu bar utility for people who use more than one Codex account. It brings account names, subscription tiers, remaining quota, and the next quota reset time into one simple list.
 
@@ -123,7 +117,7 @@ It is useful for separating personal and work accounts, comparing multiple ChatG
 
 > This is an independent local utility. It is not an official OpenAI app, and it does not rotate accounts or bypass usage limits.
 
-## What you can see
+### What you can see
 
 - Account list: Keep saved Codex accounts together in one place.
 - Plan labels: Show Pro20X, Pro5X, and other available plan names.
@@ -134,7 +128,7 @@ It is useful for separating personal and work accounts, comparing multiple ChatG
 - Menu bar access: View the important account information without opening a large window.
 - Dock presence: Keep the running app easy to find and reopen.
 
-## Who it is for
+### Who it is for
 
 Codex Account Manager is useful when you:
 
@@ -144,7 +138,7 @@ Codex Account Manager is useful when you:
 - want one place to record subscription expiry dates; or
 - prefer a local account viewer instead of a third-party online dashboard.
 
-## How to use it
+### How to use it
 
 1. Open Codex Accounts.
 2. Select Add Account and finish sign-in on the official OpenAI page.
@@ -154,17 +148,17 @@ Codex Account Manager is useful when you:
 
 The app checks accounts once per day by default. It does not keep polling every minute. If the Mac was asleep or off at the scheduled time, the next launch or wake-up performs a catch-up check. You can always refresh manually.
 
-## Get the app
+### Get the app
 
 The public repository currently provides the complete project information and source files. There is no notarized, ready-to-install macOS package yet. If a version for regular users becomes available, it will be published on the [Releases](https://github.com/MaxHu-xuan/codex-accounts/releases) page. Check the source and version notes before installing anything.
 
-## Account switching
+### Account switching
 
 The Codex desktop app does not currently expose a public one-click account switcher. This utility therefore provides guided switching: select an account, open the official Codex settings, and follow the sign-out and sign-in steps there.
 
 After you finish signing in, you can mark that account as Current (manually confirmed). The marker records your confirmation; it does not pretend to detect which account the Codex desktop app is using. The utility does not interrupt a running Codex task or sign you out without your action.
 
-## Privacy and security
+### Privacy and security
 
 - Long-term login credentials stay in the Mac's secure system storage; email addresses and quota snapshots stay in local records.
 - Account checks run locally and are not sent to a server operated by this utility.
@@ -174,7 +168,7 @@ After you finish signing in, you can mark that account as Current (manually conf
 
 Use the app in accordance with the OpenAI terms and policies that apply to your account, your organization, and your location. Do not publish login information, private screenshots, or account records in an issue or public repository.
 
-## Quota reset versus subscription expiry
+### Quota reset versus subscription expiry
 
 The next reset shown below a balance is the reset time returned for that quota window and is refreshed with the account check.
 
@@ -182,7 +176,7 @@ Subscription expiry is a date you enter yourself. The official quota information
 
 If the service does not provide a reset time, the list shows Not provided. If a saved reset time has passed, the app asks you to refresh; it does not automatically change the balance to 100%.
 
-## Frequently asked questions
+### Frequently asked questions
 
 ### Is this an official OpenAI app?
 
@@ -208,12 +202,12 @@ The official quota information does not include the billing expiry date. In the 
 
 The current version targets Apple silicon Macs running macOS 15 or later and requires a working Codex or ChatGPT desktop app, or Codex CLI.
 
-## Project status
+### Project status
 
 This is a personal local utility. Codex sign-in, plan names, and quota rules may change over time, so use the information shown by Codex and OpenAI as the final reference.
 
 Feedback about the interface, error messages, or quota display is welcome. Please do not include email addresses, account screenshots, login details, or other private information in public feedback.
 
-## License
+### License
 
 Released under the MIT License.
