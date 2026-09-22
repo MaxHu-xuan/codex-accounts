@@ -49,6 +49,10 @@ Codex 账号管理器（Codex Account Manager）是一款适用于 macOS 的轻�
 
 每天自动查看一次就够了。电脑关机或休眠时不会后台运行；下次打开或唤醒后会补一次。你也可以随时手动刷新。
 
+## 获取应用
+
+目前公开仓库提供的是完整项目说明和源文件，暂时没有可直接下载的公证安装包。后续如果提供适用于普通用户的安装版本，会放在 [Releases](https://github.com/MaxHu-xuan/codex-accounts/releases) 页面。使用前请确认下载来源和版本说明。
+
 ## 账号切换说明
 
 目前 Codex 桌面版没有提供公开的“一键切换账号”功能。因此本工具提供的是辅助切换：选择目标账号后，它会打开 Codex 设置，并告诉你下一步该怎么做。完成登录后，你可以把对应账号标记为“当前（手动确认）”。
@@ -149,6 +153,10 @@ Codex Account Manager is useful when you:
 5. Choose the daily refresh time in Settings. The default is 09:00 local time.
 
 The app checks accounts once per day by default. It does not keep polling every minute. If the Mac was asleep or off at the scheduled time, the next launch or wake-up performs a catch-up check. You can always refresh manually.
+
+## Get the app
+
+The public repository currently provides the complete project information and source files. There is no notarized, ready-to-install macOS package yet. If a version for regular users becomes available, it will be published on the [Releases](https://github.com/MaxHu-xuan/codex-accounts/releases) page. Check the source and version notes before installing anything.
 
 ## Account switching
 
