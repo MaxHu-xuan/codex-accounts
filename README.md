@@ -91,6 +91,12 @@ English: [English overview](#english-overview) | [Features](#what-you-can-see) |
 
 官方额度信息没有提供订阅账单到期日。你可以在主窗口点击“未设置”，按自己的订阅页面填写日期。
 
+### 为什么更新应用后，Mac 又要求允许访问登录信息？
+
+macOS 会检查应用的身份。更换应用版本或签名方式后，系统可能需要你为每个已保存账号重新确认一次。使用固定身份签名的版本，有助于让“始终允许”在后续更新中继续有效。
+
+0.3.2 版本减少了刷新时不必要的登录信息更新，也避免重复保存。如果在同一版本中仍然每次刷新都提示，请反馈应用版本和提示文字，并遮住账号信息。
+
 ### 支持哪些 Mac？
 
 当前版本面向 macOS 15 或更新版本的 Apple silicon Mac，并要求电脑上已经安装可用的 Codex 或 ChatGPT 桌面版，或 Codex CLI。
@@ -197,6 +203,12 @@ It means the displayed ordinary Codex quota is currently exhausted or the latest
 ### Why is the subscription expiry date blank?
 
 The official quota information does not include the billing expiry date. In the main window, select the blank expiry date and enter the date shown on your subscription page.
+
+### Why does macOS ask for permission again after an app update?
+
+macOS checks the identity of the app requesting saved login information. A change in the app version or signing method can require one new confirmation for each saved account. Consistently signed versions help macOS remember “Always Allow” across updates.
+
+Version 0.3.2 avoids unnecessary login refreshes and repeated saves. If the same version still prompts on every refresh, report the app version and prompt text with account details hidden.
 
 ### Which Macs are supported?
 

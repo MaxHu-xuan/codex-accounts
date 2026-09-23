@@ -195,25 +195,46 @@ final class AccountManager {
         guard !initial.needsLogin else { statusMessage = "\(initial.label) 需要重新登录。"; return }
         busyAccountIDs.insert(id)
         statusMessage = "正在更新 \(initial.label)…"
-        var rpc: CodexRPC?
-        var home: URL?
-        var canClean = true
+        var session: (CodexRPC, URL, Data?)?
+        var fetched: (JSONValue, QuotaSnapshot)?
+        var failure: Error?
         do {
-            let session = try await openSession(id: id, requireCredentials: true)
-            rpc = session.0
-            home = session.1
-            let identity = try await session.0.request(method: "account/read", params: .object(["refreshToken": .bool(true)]))
+            let opened = try await openSession(id: id, requireCredentials: true)
+            session = opened
+            // Let managed authentication refresh only when it needs to. A quota
+            // read should not proactively rotate credentials on every click.
+            let identity = try await opened.0.request(method: "account/read", params: .object(["refreshToken": .bool(false)]))
             guard let email = identity["account"]["email"].stringValue else { throw ManagerError.message("需要重新登录。") }
             guard email.lowercased() == initial.email.lowercased() else { throw ManagerError.message("认证账号不一致，需要重新登录。") }
-            let result = try await session.0.request(method: "account/rateLimits/read", params: .object(["excludeResetCreditDetails": .bool(true)]))
+            let result = try await opened.0.request(method: "account/rateLimits/read", params: .object(["excludeResetCreditDetails": .bool(true)]))
             let snapshot = SnapshotParser.parse(result)
             if let expected = initial.serverAccountID, let actual = snapshot.accountID, expected != actual {
                 throw ManagerError.message("认证工作区不一致，需要重新登录。")
             }
+            fetched = (identity, snapshot)
+        } catch { failure = error }
+
+        if let session {
             await session.0.stop()
-            do { try persistCredentials(id: id, home: session.1) }
-            catch { canClean = false; throw error }
-            if let index = accounts.firstIndex(where: { $0.id == id }) {
+            // Finalize exactly once, even if the quota request failed: managed
+            // OAuth may already have rotated the credential during that request.
+            do {
+                try persistCredentials(id: id, home: session.1, baseline: session.2)
+                try removeRuntime(session.1)
+            } catch {
+                // Leave the protected runtime intact when persistence fails.
+                // It may contain the only current refresh credential.
+                failure = ManagerError.message("登录状态保存未完成，已保留受保护的本地副本。请解锁钥匙串后手动刷新。")
+            }
+        }
+
+        if let index = accounts.firstIndex(where: { $0.id == id }) {
+            if let failure {
+                let message = friendlyError(failure)
+                accounts[index].lastError = message
+                if message.contains("重新登录") { accounts[index].needsLogin = true }
+                statusMessage = "\(initial.label) 更新失败，保留上次数据。"
+            } else if let (identity, snapshot) = fetched {
                 accounts[index].quotas = snapshot.quotas
                 accounts[index].credits = snapshot.credits
                 accounts[index].serverAccountID = snapshot.accountID ?? initial.serverAccountID
@@ -221,61 +242,56 @@ final class AccountManager {
                 accounts[index].updatedAt = Date()
                 accounts[index].lastError = nil
                 accounts[index].needsLogin = false
-            }
-            statusMessage = "\(initial.label) 已更新。"
-        } catch {
-            let message = friendlyError(error)
-            if let index = accounts.firstIndex(where: { $0.id == id }) {
-                accounts[index].lastError = message
-                if message.contains("重新登录") { accounts[index].needsLogin = true }
-            }
-            statusMessage = "\(initial.label) 更新失败，保留上次数据。"
-        }
-        if let rpc { await rpc.stop() }
-        if let home, canClean {
-            // A read can refresh the OAuth credential even if quota fetch fails.
-            do { try persistCredentials(id: id, home: home); try removeRuntime(home) }
-            catch {
-                if let index = accounts.firstIndex(where: { $0.id == id }) {
-                    accounts[index].lastError = "钥匙串保存失败，已保留受保护的本地登录状态。请解锁钥匙串后重试。"
-                }
+                statusMessage = "\(initial.label) 已更新。"
             }
         }
         busyAccountIDs.remove(id)
         persistState()
     }
 
-    private func openSession(id: UUID, requireCredentials: Bool, forLogin: Bool = false) async throws -> (CodexRPC, URL) {
+    private func openSession(id: UUID, requireCredentials: Bool, forLogin: Bool = false) async throws -> (CodexRPC, URL, Data?) {
         guard let store else { throw ManagerError.message("本地存储不可用。") }
+        let binary = try codexBinary()
         // Login has a throwaway home so an interrupted, unverified login can
         // never be recovered into an existing account's vault entry.
         let home = try store.home(for: forLogin ? UUID() : id)
         let authFile = home.appendingPathComponent("auth.json")
-        // Recover credentials from an interrupted prior run before restoring the vault copy.
-        if !forLogin && FileManager.default.fileExists(atPath: authFile.path) {
-            try persistCredentials(id: id, home: home)
-            try FileManager.default.removeItem(at: authFile)
+        var baseline: Data?
+        if !forLogin {
+            baseline = try vault.read(id)
+            // Recover a saved session after a prior interrupted run. Do not
+            // rewrite an identical Keychain value or delete recovery data first.
+            if let recovered = try RuntimeCredentials.load(from: home) {
+                if recovered != baseline { try vault.write(recovered, for: id) }
+                baseline = recovered
+            }
         }
-        if !forLogin, let data = try vault.read(id) {
+        if let data = baseline {
             try data.write(to: authFile, options: .atomic)
             try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: authFile.path)
         } else if requireCredentials { throw ManagerError.message("登录状态已丢失，需要重新登录。") }
-        let binary = try codexBinary()
         let rpc = CodexRPC()
         do { try await rpc.start(home: home, binary: binary) }
-        catch { await rpc.stop(); throw error }
-        return (rpc, home)
+        catch {
+            await rpc.stop()
+            if forLogin { try? removeRuntime(home) }
+            else {
+                do {
+                    try persistCredentials(id: id, home: home, baseline: baseline)
+                    try removeRuntime(home)
+                } catch {
+                    throw ManagerError.message("后台启动失败，登录状态已保留在受保护目录。请解锁钥匙串后重试。")
+                }
+            }
+            throw error
+        }
+        return (rpc, home, baseline)
     }
 
-    private func persistCredentials(id: UUID, home: URL, required: Bool = false) throws {
-        let file = home.appendingPathComponent("auth.json")
-        guard FileManager.default.fileExists(atPath: file.path) else {
-            if required { throw ManagerError.message("未获得可保存的登录状态，请重新登录。") }
-            return
+    private func persistCredentials(id: UUID, home: URL, baseline: Data? = nil, required: Bool = false) throws {
+        _ = try RuntimeCredentials.persist(from: home, comparedTo: baseline, required: required) {
+            try vault.write($0, for: id)
         }
-        let data = try Data(contentsOf: file)
-        guard (try? JSONSerialization.jsonObject(with: data)) is [String: Any] else { throw ManagerError.message("登录状态格式异常，需要重新登录。") }
-        try vault.write(data, for: id)
     }
 
     private func removeRuntime(_ home: URL) throws {
