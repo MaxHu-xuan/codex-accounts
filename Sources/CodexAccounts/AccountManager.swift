@@ -118,7 +118,8 @@ final class AccountManager {
                 var snapshot: QuotaSnapshot?
                 var quotaError: String?
                 do {
-                    let result = try await session.0.request(method: "account/rateLimits/read", params: .object(["excludeResetCreditDetails": .bool(true)]))
+                    // Fetch each available card's expiration as well as the count.
+                    let result = try await session.0.request(method: "account/rateLimits/read", params: .object(["excludeResetCreditDetails": .bool(false)]))
                     snapshot = SnapshotParser.parse(result)
                 } catch is CancellationError { throw CancellationError() }
                 catch { quotaError = "登录成功，暂时无法获取额度。可稍后手动刷新。" }
@@ -147,9 +148,12 @@ final class AccountManager {
                     email: email, plan: snapshot?.plan ?? identity["account"]["planType"].stringValue ?? "unknown",
                     serverAccountID: snapshot?.accountID ?? existing?.serverAccountID,
                     updatedAt: snapshot == nil ? existing?.updatedAt : Date(), lastError: quotaError, needsLogin: false,
-                    quotas: snapshot?.quotas ?? existing?.quotas ?? [], credits: snapshot?.credits ?? existing?.credits,
+                    quotas: snapshot?.quotas ?? existing?.quotas ?? [],
+                    credits: snapshot == nil ? existing?.credits : snapshot?.credits,
                     planOverride: existing?.planOverride, subscriptionExpiresAt: existing?.subscriptionExpiresAt,
-                    subscriptionExpirySource: existing?.subscriptionExpirySource)
+                    subscriptionExpirySource: existing?.subscriptionExpirySource,
+                    resetCreditsRemaining: snapshot == nil ? existing?.resetCreditsRemaining : snapshot?.resetCreditsRemaining,
+                    resetCreditExpiry: snapshot == nil ? existing?.resetCreditExpiry : snapshot?.resetCreditExpiry)
                 if let index = accounts.firstIndex(where: { $0.id == id }) { accounts[index] = record }
                 else { accounts.append(record) }
                 persistState()
@@ -206,7 +210,7 @@ final class AccountManager {
             let identity = try await opened.0.request(method: "account/read", params: .object(["refreshToken": .bool(false)]))
             guard let email = identity["account"]["email"].stringValue else { throw ManagerError.message("需要重新登录。") }
             guard email.lowercased() == initial.email.lowercased() else { throw ManagerError.message("认证账号不一致，需要重新登录。") }
-            let result = try await opened.0.request(method: "account/rateLimits/read", params: .object(["excludeResetCreditDetails": .bool(true)]))
+            let result = try await opened.0.request(method: "account/rateLimits/read", params: .object(["excludeResetCreditDetails": .bool(false)]))
             let snapshot = SnapshotParser.parse(result)
             if let expected = initial.serverAccountID, let actual = snapshot.accountID, expected != actual {
                 throw ManagerError.message("认证工作区不一致，需要重新登录。")
@@ -237,6 +241,8 @@ final class AccountManager {
             } else if let (identity, snapshot) = fetched {
                 accounts[index].quotas = snapshot.quotas
                 accounts[index].credits = snapshot.credits
+                accounts[index].resetCreditsRemaining = snapshot.resetCreditsRemaining
+                accounts[index].resetCreditExpiry = snapshot.resetCreditExpiry
                 accounts[index].serverAccountID = snapshot.accountID ?? initial.serverAccountID
                 accounts[index].plan = snapshot.plan ?? identity["account"]["planType"].stringValue ?? initial.plan
                 accounts[index].updatedAt = Date()
@@ -300,11 +306,15 @@ final class AccountManager {
     }
 
     private func codexBinary() throws -> URL {
-        let locations = ["/Applications/ChatGPT.app/Contents/Resources/codex", "/Applications/Codex.app/Contents/Resources/codex", "/opt/homebrew/bin/codex", "/usr/local/bin/codex"]
-        guard let path = locations.first(where: { FileManager.default.isExecutableFile(atPath: $0) }) else {
-            throw ManagerError.message("未找到可用的 Codex。请先安装或更新 Codex 桌面版或 Codex CLI。")
+        var applications: [URL] = []
+        if let registered = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.openai.codex") {
+            applications.append(registered)
         }
-        return URL(fileURLWithPath: path)
+        let roots = [URL(fileURLWithPath: "/Applications", isDirectory: true),
+                     FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Applications", isDirectory: true)]
+        applications += roots.flatMap { root in ["ChatGPT.app", "Codex.app"].map { root.appendingPathComponent($0) } }
+        return try CodexInstallation.binary(applications: applications, standalone:
+            ["/opt/homebrew/bin/codex", "/usr/local/bin/codex"].map { URL(fileURLWithPath: $0) })
     }
 
     private func friendlyError(_ error: Error) -> String {

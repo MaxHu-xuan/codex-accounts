@@ -9,6 +9,13 @@ struct QuotaRecord: Identifiable, Codable, Equatable {
     var remainingPercent: Double { max(0, min(100, 100 - usedPercent)) }
 }
 
+struct ResetCreditExpiry: Codable, Equatable {
+    var earliestExpiresAt: Date?
+    // A capped or incomplete list only establishes the earliest *known* date.
+    // A nil date means no expiration only when every available card is known.
+    var detailsComplete: Bool
+}
+
 struct AccountRecord: Identifiable, Codable, Equatable {
     var id: UUID
     var label: String
@@ -23,6 +30,8 @@ struct AccountRecord: Identifiable, Codable, Equatable {
     var planOverride: String? = nil
     var subscriptionExpiresAt: Date? = nil
     var subscriptionExpirySource: String? = nil
+    var resetCreditsRemaining: Int? = nil
+    var resetCreditExpiry: ResetCreditExpiry? = nil
 
     // Compact names for the Pro subscription levels. Preserve the raw service
     // plan independently of any user-selected display override.
@@ -84,6 +93,8 @@ struct QuotaSnapshot {
     var plan: String?
     var quotas: [QuotaRecord]
     var credits: String?
+    var resetCreditsRemaining: Int? = nil
+    var resetCreditExpiry: ResetCreditExpiry? = nil
 }
 
 enum SnapshotParser {
@@ -125,6 +136,37 @@ enum SnapshotParser {
                 else { credits = bucket["credits"]["balance"].stringValue }
             }
         }
-        return QuotaSnapshot(accountID: value["accountId"].stringValue, plan: plan, quotas: quotas, credits: credits)
+        // The account-wide count is authoritative, even when credit detail rows
+        // are omitted or capped. Missing data must not look like zero credits.
+        let count = value["rateLimitResetCredits"]["availableCount"].intValue
+        let resetCreditsRemaining = count.flatMap { $0 >= 0 ? $0 : nil }
+        return QuotaSnapshot(accountID: value["accountId"].stringValue, plan: plan, quotas: quotas,
+                             credits: credits, resetCreditsRemaining: resetCreditsRemaining,
+                             resetCreditExpiry: resetCreditExpiry(value["rateLimitResetCredits"], count: resetCreditsRemaining))
+    }
+
+    private static func resetCreditExpiry(_ summary: JSONValue, count: Int?) -> ResetCreditExpiry? {
+        guard let count, count > 0, let rows = summary["credits"].arrayValue, !rows.isEmpty else { return nil }
+        var seen = Set<String>()
+        var knownCount = 0
+        var earliest: Date?
+        for row in rows {
+            guard row["status"].stringValue == "available",
+                  row["resetType"].stringValue == "codexRateLimits",
+                  let id = row["id"].stringValue, !id.isEmpty,
+                  seen.insert(id).inserted,
+                  let expiry = row.objectValue?["expiresAt"] else { continue }
+            if expiry == .null {
+                knownCount += 1
+            } else if let seconds = expiry.intValue, seconds > 0, seconds < 253_402_300_800 {
+                // Reject invalid timestamps and millisecond values; the API uses seconds.
+                let date = Date(timeIntervalSince1970: TimeInterval(seconds))
+                earliest = earliest.map { min($0, date) } ?? date
+                knownCount += 1
+            }
+        }
+        guard knownCount > 0 else { return nil }
+        return ResetCreditExpiry(earliestExpiresAt: earliest,
+                                 detailsComplete: knownCount == count && seen.count == count)
     }
 }

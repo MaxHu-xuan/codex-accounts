@@ -50,7 +50,7 @@ struct CodexAccountsApp: App {
         Window("Codex 账号管理器", id: "accounts") {
             ManagerWindow(manager: manager)
         }
-        .defaultSize(width: 720, height: 540)
+        .defaultSize(width: 950, height: 540)
         .defaultLaunchBehavior(.presented)
         .commands {
             CommandGroup(replacing: .newItem) {

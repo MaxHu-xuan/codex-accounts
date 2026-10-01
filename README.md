@@ -1,225 +1,128 @@
-# Codex 账号管理器：Mac 上的账号、额度和重置时间查看器
+# Codex 账号管理器
 
-Codex 账号管理器（Codex Account Manager）是一款适用于 macOS 的轻量工具，用一个清晰的窗口和菜单栏列表，集中查看多个 Codex 账号的套餐、剩余额度和下次重置时间。
+在 Mac 上集中查看多个 Codex 账号的额度、余额点数和重置卡。打开主窗口可以对比账号，点击菜单栏也能快速查看。
 
-它适合同时使用个人账号、工作账号，或需要区分多个 ChatGPT / Codex 订阅的人。你可以每天查看一次所有账号的状态，减少反复登录、打开多个页面和手动记录额度的麻烦。
+这是一款独立的本地工具，非 OpenAI 官方应用。
 
-> 这是一款独立的本地工具，非 OpenAI 官方应用，也不会自动轮换账号或绕过服务限制。
+[本次更新](#036-更新) · [功能](#可以查看什么) · [使用方法](#怎么使用) · [显示说明](#怎么看列表里的信息) · [English](#english)
 
-中文： [中文说明](#中文说明) | [功能](#你可以看到什么) | [使用方法](#怎么使用) | [隐私和安全](#隐私和安全) | [常见问题](#常见问题)
+## 0.3.6 更新
 
-English: [English overview](#english-overview) | [Features](#what-you-can-see) | [How to use](#how-to-use-it) | [Privacy and security](#privacy-and-security) | [FAQ](#frequently-asked-questions)
+- **余额点数更直观**：显示在额度百分比下方，方便一起查看。
+- **重置卡增加到期时间**：在剩余次数下方显示最近到期时间，主窗口和菜单栏都能看到。
+- **一起刷新账号信息**：每日自动刷新和手动刷新都会更新额度、点数、重置卡次数及到期信息。
+- **修复获取信息失败**：修复了 Codex 桌面版更新后，部分账号信息无法获取的问题。
 
-## 中文说明
+应用也保留了减少重复授权提醒的改进。Mac 有时仍会在更新应用后要求重新确认访问登录信息；确认后的使用体验也受系统设置影响。
 
-## 你可以看到什么
+## 可以查看什么
 
-- 账号列表：集中查看已经添加的 Codex 账号。
-- 套餐名称：自动显示 Pro20X、Pro5X 等套餐等级。
-- 剩余额度：优先显示普通 Codex 周额度；不同账号可以直接对比。
-- 下次重置时间：在余额下方显示额度何时恢复，使用电脑的本地时区。
-- 订阅到期日：官方没有提供这个日期时，可以自己填写并保存。
-- 当前账号标记：你在 Codex 中确认当前账号后，可以在列表中标记“当前（手动确认）”。
-- 菜单栏入口：不用打开复杂页面，点击菜单栏即可查看账号和额度。
-- Dock 图标：应用正在运行时，会出现在 Dock 中，方便重新打开。
+| 内容 | 显示方式 |
+| --- | --- |
+| 账号和套餐 | 每个账号单独一行，可以修改备注，方便区分 |
+| 剩余额度 | 以百分比显示，优先展示普通 Codex 周额度 |
+| 余额点数 | 显示在额度百分比下方，与额度百分比分开显示 |
+| 下次额度重置 | 查看额度预计何时恢复 |
+| 重置卡 | 查看剩余次数，以及最近到期时间 |
+| 订阅到期日 | 根据自己的订阅页面手动填写 |
+| 当前账号 | 在 Codex 中确认后，手动添加当前标记 |
 
-## 什么时候有用
-
-- 你有多个 Pro20X 或 Pro5X 账号，需要快速比较剩余额度。
-- 你想知道某个账号什么时候恢复额度。
-- 你需要把个人和工作账号分开管理。
-- 你不想每次都退出 Codex、重新打开网页，再手动记下额度。
-- 你希望把账号信息留在自己的 Mac 上，不使用第三方在线账号管理网站。
+重置卡只供查看，不会被本工具兑换或消耗。各账号的额度与点数分别显示，不会合并或转移。
 
 ## 怎么使用
 
-1. 打开 Codex Accounts。
-2. 点击“添加账号”，在官方登录页面完成登录。
-3. 登录完成后，账号、套餐、余额和下次重置时间会显示在列表中。
-4. 菜单栏可以快速查看；主窗口可以修改备注、填写订阅到期日、重新登录或移除账号。
-5. 在主窗口的“设置”中选择每天自动查看的时间。默认是本地时间 09:00。
+1. 打开 Codex Accounts，点击“添加账号”。
+2. 在官方登录页面完成登录，返回后即可查看账号信息。
+3. 点击“刷新全部”更新所有账号；也可以在单个账号右侧菜单中选择“刷新账号信息”。
+4. 在“设置”中选择每日更新时间，默认是本地时间 09:00。
+5. 平时点击菜单栏图标即可快速查看；需要修改备注、填写订阅日期或移除账号时，打开主窗口操作。
 
-每天自动查看一次就够了。电脑关机或休眠时不会后台运行；下次打开或唤醒后会补一次。你也可以随时手动刷新。
+电脑关机或休眠期间不会执行刷新；下次打开应用或唤醒后会补一次。列表展示的是最近一次获取的信息，想确认最新状态时可以手动刷新。
 
-## 获取应用
+### 辅助切换账号
 
-目前公开仓库提供的是完整项目说明和源文件，暂时没有可直接下载的公证安装包。后续如果提供适用于普通用户的安装版本，会放在 [Releases](https://github.com/MaxHu-xuan/codex-accounts/releases) 页面。使用前请确认下载来源和版本说明。
+选择“辅助切换到 Codex”后，工具会打开 Codex 设置并给出操作指引。请在 Codex 中完成切换，再把对应账号标记为“当前（手动确认）”。
 
-## 账号切换说明
+当前标记由你手动维护，工具不会自动识别 Codex 正在使用哪个账号，也不会替你退出登录。
 
-目前 Codex 桌面版没有提供公开的“一键切换账号”功能。因此本工具提供的是辅助切换：选择目标账号后，它会打开 Codex 设置，并告诉你下一步该怎么做。完成登录后，你可以把对应账号标记为“当前（手动确认）”。
+### 填写订阅日期
 
-这个标记只是你的确认记录，不会假装自动识别桌面里当前登录的是哪个账号。它不会中断正在运行的 Codex 任务，也不会擅自替你退出或登录。
+“订阅到期”需要手动填写，可按自己的订阅页面记录。它与额度恢复时间、重置卡到期时间是三件不同的事，不会互相代替。
 
-## 隐私和安全
+## 怎么看列表里的信息
 
-- 长期登录凭据只保存在这台 Mac 的系统安全存储中；邮箱和额度快照只保存在本机记录中。
-- 账号查询在本机独立进行，不会把你的账号列表上传到本工具的服务器。
-- 不会读取或复制你正在使用的 Codex 桌面登录状态。
-- 不会把账号密码、登录令牌或额度数据写入公开仓库。
-- 移除账号只会移除本工具保存的记录，不会删除你的 OpenAI 账号或订阅。
+### 0 和“未提供”有什么区别？
 
-使用前仍应确认你遵守 OpenAI 服务条款、账号所属组织的规定和当地法律。请不要把登录信息、截图或本机账号记录发布到公开页面。
+- **0%、0 点、0 次**：最近一次获取的信息明确显示为零，分别对应额度、点数和重置卡。
+- **未提供**：尚未获取到这项信息，或当前无法获得；不代表为零。
+- **暂无可用卡**：重置卡剩余次数为零，因此没有可显示的到期时间。
 
-## 额度和订阅日期的区别
+余额点数最多显示两位小数，鼠标悬停可以查看更完整的数值。很小的正余额会显示为“<0.01 点”，不会被当成零。
 
-余额下方的“下次重置”是服务返回的额度恢复时间，会随额度查询更新。
+### 重置卡到期时间怎么看？
 
-“订阅到期”是你自己填写的订阅日期。由于官方额度信息不包含订阅账单到期日，工具不会猜测，也不会拿额度重置时间代替订阅到期日。
+| 显示 | 含义 |
+| --- | --- |
+| 到期 + 日期 | 多张可用卡中最早的到期时间 |
+| 已知到期 + 日期 | 目前只拿到了部分卡的详情；显示这些卡中最早的已知时间，其他卡可能更早到期 |
+| 到期未提供 | 无法确定到期时间，不等于不过期 |
+| 不过期 | 已获得完整详情，确认当前可用卡均无到期时间 |
+| 到期需刷新 / 已知到期需刷新 | 保存的时间已经过去，需要刷新确认；工具不会自行扣减次数 |
 
-如果服务没有返回重置时间，列表会显示“未提供”。如果保存的时间已经过去，工具会提示需要刷新，不会自行把余额改成 100%。
+日期按 Mac 的本地时区显示，鼠标悬停可查看包含年份和时区的完整时间。额度下方的“重置”是额度恢复时间，与重置卡的“到期”不同。
+
+## 下载与使用条件
+
+目前还没有可直接下载的安装包；后续版本见[下载页面](../../releases)。
+
+当前版本适用于搭载 Apple 芯片、运行 macOS 15 或更新版本的 Mac。使用前，请在电脑上安装可用的 Codex 或 ChatGPT 桌面版。
+
+## 隐私
+
+登录信息保存在这台 Mac 的系统安全存储中，账号列表和最近一次查询结果也保存在本机。工具不会把你的账号列表上传到自己的服务器，也不会读取或复制现有 Codex 桌面会话的登录信息。
+
+移除账号只会删除本工具保存的记录，不会删除你的 OpenAI 账号或订阅。反馈问题时，请遮住账号信息和私人内容。
 
 ## 常见问题
 
-### 这是 OpenAI 官方应用吗？
+**为什么更新应用后，Mac 又要求我输入密码？**
 
-不是。这是一款个人本地工具，使用 Codex 提供的登录和额度能力。OpenAI、ChatGPT 和 Codex 名称及相关商标归其各自所有者所有。
+Mac 会确认访问已保存登录信息的应用身份。更新后可能需要为每个账号重新允许一次。保持应用身份一致有助于记住“始终允许”，但无法保证系统在所有情况下都不再询问。若同一版本每次刷新都提示，可反馈版本号和提示文字，并隐藏账号信息。
 
-### 它会自动帮我换账号吗？
+**为什么工具里的信息和 Codex 页面不同？**
 
-不会。Codex 桌面版目前没有公开的一键换号入口，工具只能打开官方设置并提供操作指引。你可以在列表中手动记录当前账号，避免记错。
+列表保存的是最近一次查询结果。先尝试刷新；仍有差异时，请以 Codex 和 OpenAI 页面显示的信息为准。
 
-### 它会把多个账号的额度合在一起吗？
+**账号提示登录失效怎么办？**
 
-不会。每个账号分别显示，余额不会合并，也不会自动把一个账号的额度转给另一个账号。
-
-### 为什么有的账号显示 0%？
-
-这表示该账号当前普通 Codex 额度已经用完或额度快照显示为 0%。请查看“下次重置”时间；备用模型额度不代替普通 Codex 额度。
-
-### 为什么看不到订阅到期日？
-
-官方额度信息没有提供订阅账单到期日。你可以在主窗口点击“未设置”，按自己的订阅页面填写日期。
-
-### 为什么更新应用后，Mac 又要求允许访问登录信息？
-
-macOS 会检查应用的身份。更换应用版本或签名方式后，系统可能需要你为每个已保存账号重新确认一次。使用固定身份签名的版本，有助于让“始终允许”在后续更新中继续有效。
-
-0.3.2 版本减少了刷新时不必要的登录信息更新，也避免重复保存。如果在同一版本中仍然每次刷新都提示，请反馈应用版本和提示文字，并遮住账号信息。
-
-### 支持哪些 Mac？
-
-当前版本面向 macOS 15 或更新版本的 Apple silicon Mac，并要求电脑上已经安装可用的 Codex 或 ChatGPT 桌面版，或 Codex CLI。
-
-## 项目状态
-
-这是一个个人维护的本地工具。Codex 的登录方式、套餐名称和额度规则可能变化，使用前请以 Codex 和 OpenAI 页面显示的信息为准。
-
-欢迎反馈界面问题、错误提示和额度显示问题。请不要在公开反馈中附带邮箱、账号截图、登录信息或其他私人资料。
-
-## 许可证
-
-本项目采用 MIT License 发布。
+在对应账号的菜单中选择“重新登录”，完成官方登录后再刷新。
 
 ---
 
-## English overview
+## English
 
-### Codex Account Manager: macOS Account, Quota, and Reset-Time Viewer
+Codex Account Manager is an independent macOS utility for checking multiple Codex accounts in one window or from the menu bar. It shows plans, remaining quota, credit balances, usage reset credits and expiry dates. It is not an official OpenAI app.
 
-Codex Account Manager is a lightweight macOS menu bar utility for people who use more than one Codex account. It brings account names, subscription tiers, remaining quota, and the next quota reset time into one simple list.
+### What's new in 0.3.6
 
-It is useful for separating personal and work accounts, comparing multiple ChatGPT / Codex subscriptions, and checking usage without repeatedly signing in and out or opening several pages.
+- Credit balances appear below quota percentages.
+- The nearest reset-credit expiry appears below the remaining count.
+- Daily and manual refreshes update these details together.
+- Fixes an issue that prevented account details from loading after a Codex desktop update.
 
-> This is an independent local utility. It is not an official OpenAI app, and it does not rotate accounts or bypass usage limits.
+### Getting started
 
-### What you can see
+1. Open Codex Accounts, select Add Account and complete the official sign-in.
+2. Use Refresh All or the menu beside an account to update its information.
+3. Choose a daily refresh time in Settings; the default is 09:00 local time.
+4. Use the menu bar for a quick check and the main window to manage saved accounts.
 
-- Account list: Keep saved Codex accounts together in one place.
-- Plan labels: Show Pro20X, Pro5X, and other available plan names.
-- Remaining quota: Compare each account's ordinary Codex weekly quota.
-- Next reset time: See when the displayed quota is expected to reset in your Mac's local time zone.
-- Subscription expiry: Enter and save an expiry date when the official account information does not provide one.
-- Current-account marker: After checking Codex yourself, mark one account as “Current (manually confirmed)”.
-- Menu bar access: View the important account information without opening a large window.
-- Dock presence: Keep the running app easy to find and reopen.
+Switching is guided: finish the switch in Codex yourself, then mark the account as Current (manually confirmed). Subscription expiry dates are entered manually.
 
-### Who it is for
+Zero means the latest result reported zero. Not provided means the information is unknown. For reset credits, Known expiry covers only the cards whose details are available; other cards may expire sooner. No expiry appears only when complete details confirm it. Dates use your Mac's local time zone. Expired dates prompt a refresh without automatically changing the count. Reset credits are displayed only and are never redeemed by this app.
 
-Codex Account Manager is useful when you:
+Account records stay on your Mac. Removing a saved account does not delete the OpenAI account or subscription. There is no ready-to-download installer yet; future versions will appear on the [download page](../../releases). Requires an Apple silicon Mac with macOS 15 or later and a working Codex or ChatGPT desktop app.
 
-- use personal and work Codex accounts on the same Mac;
-- have multiple Pro20X or Pro5X subscriptions;
-- want to compare remaining quota and reset times;
-- want one place to record subscription expiry dates; or
-- prefer a local account viewer instead of a third-party online dashboard.
+## 许可证 / License
 
-### How to use it
-
-1. Open Codex Accounts.
-2. Select Add Account and finish sign-in on the official OpenAI page.
-3. After sign-in, the account, plan, remaining quota, and next reset time appear in the list.
-4. Use the main window to rename an account, enter a subscription expiry date, sign in again, or remove a saved account.
-5. Choose the daily refresh time in Settings. The default is 09:00 local time.
-
-The app checks accounts once per day by default. It does not keep polling every minute. If the Mac was asleep or off at the scheduled time, the next launch or wake-up performs a catch-up check. You can always refresh manually.
-
-### Get the app
-
-The public repository currently provides the complete project information and source files. There is no notarized, ready-to-install macOS package yet. If a version for regular users becomes available, it will be published on the [Releases](https://github.com/MaxHu-xuan/codex-accounts/releases) page. Check the source and version notes before installing anything.
-
-### Account switching
-
-The Codex desktop app does not currently expose a public one-click account switcher. This utility therefore provides guided switching: select an account, open the official Codex settings, and follow the sign-out and sign-in steps there.
-
-After you finish signing in, you can mark that account as Current (manually confirmed). The marker records your confirmation; it does not pretend to detect which account the Codex desktop app is using. The utility does not interrupt a running Codex task or sign you out without your action.
-
-### Privacy and security
-
-- Long-term login credentials stay in the Mac's secure system storage; email addresses and quota snapshots stay in local records.
-- Account checks run locally and are not sent to a server operated by this utility.
-- The utility does not read or copy the login state of your existing Codex desktop session.
-- Account passwords, login tokens, and personal quota snapshots are not included in this public repository.
-- Removing an account removes the copy saved by this utility; it does not delete your OpenAI account or subscription.
-
-Use the app in accordance with the OpenAI terms and policies that apply to your account, your organization, and your location. Do not publish login information, private screenshots, or account records in an issue or public repository.
-
-### Quota reset versus subscription expiry
-
-The next reset shown below a balance is the reset time returned for that quota window and is refreshed with the account check.
-
-Subscription expiry is a date you enter yourself. The official quota information does not expose the billing expiry date, so the app does not guess it or substitute a quota reset time.
-
-If the service does not provide a reset time, the list shows Not provided. If a saved reset time has passed, the app asks you to refresh; it does not automatically change the balance to 100%.
-
-### Frequently asked questions
-
-### Is this an official OpenAI app?
-
-No. It is an independent local utility that uses Codex sign-in and quota capabilities. OpenAI, ChatGPT, and Codex names and trademarks belong to their respective owners.
-
-### Does it switch accounts automatically?
-
-No. The Codex desktop app does not currently provide a public one-click account-switching entry point. The utility opens the official settings and provides guidance. You can mark the account you confirmed so it is easier to remember later.
-
-### Does it combine quotas across accounts?
-
-No. Every account is shown separately. Quotas are not merged, transferred, or redistributed.
-
-### Why does an account show 0%?
-
-It means the displayed ordinary Codex quota is currently exhausted or the latest snapshot reports zero remaining. Check the next reset time. A reserve-model quota is not substituted for the ordinary Codex quota.
-
-### Why is the subscription expiry date blank?
-
-The official quota information does not include the billing expiry date. In the main window, select the blank expiry date and enter the date shown on your subscription page.
-
-### Why does macOS ask for permission again after an app update?
-
-macOS checks the identity of the app requesting saved login information. A change in the app version or signing method can require one new confirmation for each saved account. Consistently signed versions help macOS remember “Always Allow” across updates.
-
-Version 0.3.2 avoids unnecessary login refreshes and repeated saves. If the same version still prompts on every refresh, report the app version and prompt text with account details hidden.
-
-### Which Macs are supported?
-
-The current version targets Apple silicon Macs running macOS 15 or later and requires a working Codex or ChatGPT desktop app, or Codex CLI.
-
-### Project status
-
-This is a personal local utility. Codex sign-in, plan names, and quota rules may change over time, so use the information shown by Codex and OpenAI as the final reference.
-
-Feedback about the interface, error messages, or quota display is welcome. Please do not include email addresses, account screenshots, login details, or other private information in public feedback.
-
-### License
-
-Released under the MIT License.
+[MIT License](LICENSE)

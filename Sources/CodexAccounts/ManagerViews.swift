@@ -4,15 +4,15 @@ struct MenuContent: View {
     @Bindable var manager: AccountManager
     @Environment(\.openWindow) private var openWindow
 
-    private let visibleRowCount = 8
-    private let rowHeight: CGFloat = 58
+    private let visibleRowCount = 6
+    private let rowHeight: CGFloat = 106
 
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Text("账号")
                 Spacer()
-                Text("余额")
+                Text("额度 / 点数 / 重置卡")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -39,7 +39,7 @@ struct MenuContent: View {
                 .frame(height: rowHeight * CGFloat(visibleRowCount))
             }
         }
-        .frame(width: 340)
+        .frame(width: 420)
     }
 
     private var accountRows: some View {
@@ -52,14 +52,12 @@ struct MenuContent: View {
                                 .font(.body.weight(.medium))
                                 .foregroundStyle(.primary)
                                 .lineLimit(1)
-                            HStack(spacing: 6) {
-                                Text(account.displayPlan)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
-                                if manager.manualCurrentAccountID == account.id {
-                                    ManualCurrentBadge(confirmedAt: manager.manualCurrentConfirmedAt)
-                                }
+                            Text(account.displayPlan)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                            if manager.manualCurrentAccountID == account.id {
+                                ManualCurrentBadge(confirmedAt: manager.manualCurrentConfirmedAt)
                             }
                         }
                         Spacer(minLength: 8)
@@ -67,10 +65,25 @@ struct MenuContent: View {
                             Text(balanceText(account))
                                 .font(.body.weight(.semibold).monospacedDigit())
                                 .foregroundStyle(balanceColor(account))
+                            Text("点数 \(creditBalanceText(account))")
+                                .font(.caption.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .help(creditBalanceDescription(account))
                             Text(quotaResetText(account, includeLabel: true))
                                 .font(.caption2.monospacedDigit())
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)
+                            Text("重置卡 \(resetCreditsText(account))")
+                                .font(.caption.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .help(resetCreditsDescription(account))
+                            Text(resetCreditExpiryText(account))
+                                .font(.caption2.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .help(resetCreditExpiryDescription(account))
                         }
                         .fixedSize(horizontal: true, vertical: false)
                         .help(quotaDescription(account))
@@ -88,8 +101,8 @@ struct MenuContent: View {
                         Button("清除当前标记", action: manager.clearCurrentAccount)
                     }
                 }
-                .accessibilityLabel("\(account.label)，\(account.displayPlan)，余额\(balanceText(account))，下次重置\(quotaResetText(account))\(manager.manualCurrentAccountID == account.id ? "，当前（手动确认）" : "")")
-                .help("\(quotaDescription(account))\n打开账号管理；右键可手动标记当前账号")
+                .accessibilityLabel("\(account.label)，\(account.displayPlan)，剩余额度\(balanceText(account))，余额点数\(creditBalanceText(account))，下次重置\(quotaResetText(account))，重置卡\(resetCreditsText(account))，\(resetCreditExpiryText(account))\(manager.manualCurrentAccountID == account.id ? "，当前（手动确认）" : "")")
+                .help("\(quotaDescription(account))\n\(creditBalanceDescription(account))\n\(resetCreditsDescription(account))\n\(resetCreditExpiryDescription(account))\n打开账号管理；右键可手动标记当前账号")
             }
         }
     }
@@ -141,7 +154,8 @@ struct ManagerWindow: View {
                         VStack(spacing: 0) {
                             HStack(spacing: 16) {
                                 Text("账号").frame(maxWidth: .infinity, alignment: .leading)
-                                Text("余额 / 下次重置").frame(width: 150, alignment: .trailing)
+                                Text("剩余额度 / 点数").frame(width: 150, alignment: .trailing)
+                                Text("重置卡 / 到期").frame(width: 150, alignment: .trailing)
                                 Text("订阅到期").frame(width: 126, alignment: .trailing)
                                 Color.clear.frame(width: 22, height: 1)
                             }
@@ -223,7 +237,7 @@ struct ManagerWindow: View {
                     .padding(.vertical, 12)
             }
         }
-        .frame(minWidth: 660, idealWidth: 760, minHeight: 400, idealHeight: 550)
+        .frame(minWidth: 850, idealWidth: 950, minHeight: 400, idealHeight: 550)
         .sheet(item: $renameTarget) { account in
             AccountRenameSheet(account: account) { value in
                 manager.renameAccount(account.id, to: value)
@@ -293,13 +307,34 @@ private struct AccountSummary: View {
                     Text(balanceText(account))
                         .font(.body.weight(.semibold).monospacedDigit())
                         .foregroundStyle(balanceColor(account))
-                    Text(quotaResetText(account))
+                    Text(creditBalanceText(account))
+                        .font(.callout.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                        .help(creditBalanceDescription(account))
+                        .accessibilityLabel("余额点数\(creditBalanceText(account))")
+                    Text(quotaResetText(account, includeLabel: true))
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
                 .frame(width: 150, alignment: .trailing)
                 .help(quotaDescription(account))
+
+                VStack(alignment: .trailing, spacing: 5) {
+                    Text(resetCreditsText(account))
+                        .font(.body.weight(.medium).monospacedDigit())
+                        .foregroundStyle(account.resetCreditsRemaining == nil ? Color.secondary : Color.primary)
+                        .help(resetCreditsDescription(account))
+                        .accessibilityLabel("重置卡\(resetCreditsText(account))")
+                    Text(resetCreditExpiryText(account))
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .help(resetCreditExpiryDescription(account))
+                }
+                .frame(width: 150, alignment: .trailing)
 
                 Button(action: editSubscription) {
                     Text(account.subscriptionExpiresAt.map(expiryDate) ?? "未设置")
@@ -320,7 +355,7 @@ private struct AccountSummary: View {
                     Button("编辑订阅", action: editSubscription)
                     Button("修改备注", action: rename)
                     Divider()
-                    Button("刷新额度", action: refresh)
+                    Button("刷新账号信息", action: refresh)
                     Button("辅助切换到 Codex", action: switchAccount)
                     Button("重新登录", action: reauthenticate)
                     Divider()
@@ -396,7 +431,7 @@ private struct EmptyAccounts: View {
     var body: some View {
         VStack(spacing: 12) {
             Text("还没有账号").font(.headline)
-            Text("添加后，每天自动更新一次额度。")
+            Text("添加后，每天自动更新额度、余额点数和重置卡次数。")
                 .font(.callout)
                 .foregroundStyle(.secondary)
             Button("添加账号", systemImage: "plus", action: addAction)
@@ -528,6 +563,78 @@ private func balanceColor(_ account: AccountRecord) -> Color {
     if remaining <= 10 { return .red }
     if remaining <= 25 { return .orange }
     return .primary
+}
+
+private func creditBalanceText(_ account: AccountRecord) -> String {
+    guard let raw = account.credits?.trimmingCharacters(in: .whitespacesAndNewlines),
+          !raw.isEmpty else { return "未提供" }
+    guard let balance = Decimal(string: raw, locale: Locale(identifier: "en_US_POSIX")),
+          !balance.isNaN else { return raw }
+    // Keep small positive balances distinct from a service-reported zero.
+    if balance > 0, balance < Decimal(1) / 100 { return "<0.01 点" }
+    let formatter = NumberFormatter()
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.numberStyle = .decimal
+    formatter.maximumFractionDigits = 2
+    formatter.minimumFractionDigits = 0
+    return "\(formatter.string(from: NSDecimalNumber(decimal: balance)) ?? raw) 点"
+}
+
+private func creditBalanceDescription(_ account: AccountRecord) -> String {
+    guard let raw = account.credits?.trimmingCharacters(in: .whitespacesAndNewlines),
+          !raw.isEmpty else { return "余额点数尚未获取或服务未返回；可手动刷新。" }
+    if raw == "不限量" { return "服务返回余额点数不限量。随每日或手动刷新更新。" }
+    return "余额点数原值：\(raw) 点。列表最多显示两位小数，随每日或手动刷新更新。"
+}
+
+private func resetCreditsText(_ account: AccountRecord) -> String {
+    guard let remaining = account.resetCreditsRemaining else { return "未提供" }
+    return "\(remaining)次"
+}
+
+private func resetCreditsDescription(_ account: AccountRecord) -> String {
+    guard account.resetCreditsRemaining != nil else {
+        return "重置卡次数尚未获取或服务未返回；可手动刷新。未提供不表示0次。"
+    }
+    return "剩余重置卡：\(resetCreditsText(account))。随每日或手动刷新更新，仅展示，不会消耗。"
+}
+
+private func resetCreditExpiryText(_ account: AccountRecord) -> String {
+    guard let count = account.resetCreditsRemaining else { return "到期未提供" }
+    guard count > 0 else { return "暂无可用卡" }
+    guard let expiry = account.resetCreditExpiry else { return "到期未提供" }
+    guard let date = expiry.earliestExpiresAt else {
+        return expiry.detailsComplete ? "不过期" : "到期未提供"
+    }
+    let label = expiry.detailsComplete ? "到期" : "已知到期"
+    guard date > Date() else { return "\(label)需刷新" }
+    let formatter = DateFormatter()
+    formatter.timeZone = .autoupdatingCurrent
+    formatter.dateFormat = "MM-dd HH:mm"
+    return "\(label) \(formatter.string(from: date))"
+}
+
+private func resetCreditExpiryDescription(_ account: AccountRecord) -> String {
+    guard let count = account.resetCreditsRemaining else {
+        return "重置卡次数尚未获取或服务未返回，到期时间未提供。"
+    }
+    guard count > 0 else { return "服务返回重置卡剩余0次，暂无可用卡。" }
+    guard let expiry = account.resetCreditExpiry else {
+        return "重置卡到期详情尚未获取或服务未返回；可手动刷新。"
+    }
+    guard let date = expiry.earliestExpiresAt else {
+        return expiry.detailsComplete
+            ? "服务返回的完整详情表明，当前可用重置卡均不过期。"
+            : "服务未提供完整重置卡到期详情，无法确定到期时间；未提供不表示不过期。"
+    }
+    let formatter = DateFormatter()
+    formatter.timeZone = .autoupdatingCurrent
+    formatter.dateFormat = "yyyy-MM-dd HH:mm z"
+    let scope = expiry.detailsComplete
+        ? "当前可用重置卡中最早到期时间"
+        : "仅服务已返回卡中最早的已知到期时间；详情不完整，可能另有更早到期的卡"
+    let refresh = date <= Date() ? "\n该时间已过去，请刷新确认；不会据此更改剩余次数。" : ""
+    return "\(scope)：\(formatter.string(from: date))（本地时区）。\(refresh)"
 }
 
 private func quotaDescription(_ account: AccountRecord) -> String {
